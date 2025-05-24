@@ -13,3 +13,11 @@ I developed this second part,while the first part was implemented by [Kenny](htt
 This repository has only one commit because it was part of our exam.
 The goal was to demonstrate our ability to work with Spring Boot (Web) and our understanding of dependency injection.
 The original project is in Kenny's private repository.
+
+---
+
+## REST API SPECIFICATION (OpenAPI Specification)
+
+[chmapionship](https://github.com/TheDarkMac/foot/blob/main/championship/src/main/resources/APIChompionship.yaml)
+
+[fifa-analytics](https://github.com/TheDarkMac/foot/blob/main/fifa-analytics/src/main/resources/APIfifa.yaml)
