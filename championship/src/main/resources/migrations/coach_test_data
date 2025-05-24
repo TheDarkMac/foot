@@ -1,0 +1,16 @@
+INSERT INTO coach (id, name, nationality) VALUES
+('aaaaaaa2-aaaa-11aa-aaaa-aaaaaaaaaaa2', 'Martín Demichelis', 'ARGENTINA'),
+('aaaaaaa3-aaaa-11aa-aaaa-aaaaaaaaaaa3', 'Toru Oniki', 'JAPAN'),
+('aaaaaaa1-aaaa-11aa-aaaa-aaaaaaaaaaa1', 'Stefano Pioli', 'ITALY'),
+('aaaaaaa2-aaaa-22aa-aaaa-aaaaaaaaaaa2', 'Martín Demichelis', 'ARGENTINA'),
+('aaaaaaa3-aaaa-33aa-aaaa-aaaaaaaaaaa3', 'Toru Oniki', 'JAPAN'),
+('11ecccc7-f198-45ce-91a3-9dca0878e7a3', 'Pep Guardiola', 'SPAIN'),
+('4d7e3cdb-3fc0-4266-9257-4ad7da6a8798', 'Carlo Ancelotti', 'ITALY'),
+('35ca14fc-be71-4ca7-ba51-8ba9018413fa', 'Didier Deschamps', 'FRANCE'),
+('cb5c4fda-4127-445d-a8bb-ca6b4f748813', 'Gareth Southgate', 'UNITED_KINGDOM'),
+('ecb86fe2-4d6e-4963-a236-be8b2ab0ab16', 'Hansi Flick', 'GERMANY'),
+('818ea25b-824c-4e0a-a33f-16edbdd6763b', 'Lionel Scaloni', 'ARGENTINA'),
+('7ef402d0-f749-406d-9db0-f7404c096327', 'Tite', 'BRAZIL'),
+('4a823b30-981a-4298-b575-fb6b3e5717e8', 'Roberto Martínez', 'PORTUGAL'),
+('930c1a5d-bf81-4eb2-868c-515e7c708531', 'Luis de la Fuente', 'SPAIN'),
+('67a8fa99-5d0e-4e45-8fe8-e359d32eb059', 'Hervé Renard', 'FRANCE');

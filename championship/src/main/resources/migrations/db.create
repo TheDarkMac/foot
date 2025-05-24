@@ -1,0 +1,136 @@
+create database jean_foot;
+-- Activer l'extension pour UUID si ce n'est pas déjà fait
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Création du type ENUM pour POSITION si non existant
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'position') THEN
+        CREATE TYPE "position" AS ENUM ('GOAL_KEEPER', 'DEFENDER', 'MIDFIELDER', 'STRIKER');
+    END IF;
+END$$;
+
+-- Création du type ENUM pour SEASON_STATUS si non existant
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'season_status') THEN
+        CREATE TYPE season_status AS ENUM ('NOT_STARTED', 'STARTED', 'COMPLETED');
+    END IF;
+END$$;
+
+-- 0001 : Création de la table players
+CREATE TABLE players (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name TEXT NOT NULL,
+    number INTEGER NOT NULL,
+    player_position "position" NOT NULL,
+    nationality TEXT NOT NULL,
+    age INTEGER NOT NULL,
+    CHECK (age >= 0)
+);
+
+-- 0002 : Création de la table season
+CREATE TABLE season (
+    id UUID DEFAULT uuid_generate_v4() UNIQUE,
+    alias VARCHAR,
+    status SEASON_STATUS DEFAULT 'NOT_STARTED',
+    year INTEGER DEFAULT 2000,
+    PRIMARY KEY(alias,year)
+);
+
+-- 0003 : Création de la table player_statistic
+CREATE TABLE player_statistic (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    player_id UUID NOT NULL,
+    scored_goal INTEGER DEFAULT 0,
+    playing_time BIGINT DEFAULT 0,
+    season_id UUID
+);
+CREATE TABLE coach (
+    id UUID NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    nationality TEXT NOT NULL
+);
+
+-- Contraintes
+ALTER TABLE coach ADD CONSTRAINT coach_pkey PRIMARY KEY (id);
+
+CREATE TABLE club (
+    id UUID NOT NULL,
+    name TEXT NOT NULL,
+    acronym TEXT,
+    year_creation INTEGER,
+    stadium TEXT,
+    coach_id UUID
+);
+
+-- Contraintes
+ALTER TABLE club ADD CONSTRAINT club_pkey PRIMARY KEY (id);
+ALTER TABLE club ADD CONSTRAINT club_coach_id_fkey FOREIGN KEY (coach_id) REFERENCES coach(id);
+
+-- 0004 : Ajout des contraintes et clés étrangères
+ALTER TABLE player_statistic
+    ADD CONSTRAINT fk_player FOREIGN KEY (player_id) REFERENCES players(id);
+
+ALTER TABLE player_statistic
+    ADD CONSTRAINT fk_season FOREIGN KEY (season_id) REFERENCES season(id);
+
+CREATE TABLE club_player (
+    id uuid PRIMARY KEY,
+    club_id uuid NOT NULL,
+    player_id uuid,
+    CONSTRAINT club_player_club_id_fkey FOREIGN KEY (club_id) REFERENCES club(id),
+    CONSTRAINT club_player_player_id_fkey FOREIGN KEY (player_id) REFERENCES players(id)
+);
+ create TABLE club_statistic(
+    id uuid primary key,
+    club_id uuid NOT NULL,
+    rankingPoints int ,
+    scoredGoals int ,
+    concededGoals int ,
+    differenceGoals int ,
+    cleanSheetNumber int,
+    CONSTRAINT club_player_club_id_fkey FOREIGN KEY (club_id) REFERENCES club(id)
+);
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'match_status') THEN
+        CREATE TYPE match_status AS ENUM ('NOT_STARTED', 'IN_PROGRESS', 'FINISHED');
+    END IF;
+END$$;
+
+CREATE TABLE match (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    club_playing_home_id UUID NOT NULL,
+    club_playing_away_id UUID NOT NULL,
+    stadium TEXT NOT NULL,
+    match_datetime TIMESTAMP NOT NULL,
+    actual_status match_status DEFAULT 'NOT_STARTED',
+    season_year INT DEFAULT 0,
+    home_score INT DEFAULT 0,
+    away_score INT DEFAULT 0,
+
+    FOREIGN KEY (club_playing_home_id) REFERENCES club(id),
+    FOREIGN KEY (club_playing_away_id) REFERENCES club(id)
+);
+
+CREATE TABLE goal (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    match_id UUID NOT NULL,
+    player_id UUID NOT NULL,
+    club_id UUID NOT NULL, -- club du joueur (utile pour différencier équipe)
+    minute_of_goal INT,
+    own_goal BOOLEAN DEFAULT FALSE,
+
+    FOREIGN KEY (match_id) REFERENCES match(id),
+    FOREIGN KEY (player_id) REFERENCES players(id),
+    FOREIGN KEY (club_id) REFERENCES club(id)
+);
+
+create table transfert(
+id uuid primary key,
+ player_id uuid,
+ transfert_date date,
+ transfertType varchar
+ );

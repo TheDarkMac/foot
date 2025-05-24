@@ -1,0 +1,94 @@
+DROP TYPE IF EXISTS "position" CASCADE ;
+DROP TYPE IF EXISTS "playing_time_unit" CASCADE ;
+DROP TABLE IF EXISTS seasons CASCADE ;
+DROP TABLE IF EXISTS coach CASCADE ;
+DROP TABLE IF EXISTS clubs CASCADE ;
+DROP TABLE IF EXISTS players CASCADE ;
+DROP TYPE IF EXISTS seasons_status CASCADE ;
+DROP TABLE IF EXISTS player_statistics CASCADE;
+DROP TABLE IF EXISTS club_statistics;
+DROP TYPE IF EXISTS championship CASCADE;
+
+CREATE TYPE championship AS ENUM(
+        'Premier_League',
+        'La_LigA',
+        'Bundesliga',
+        'Seria_A',
+        'Ligue_1'
+);
+
+CREATE TYPE seasons_status AS ENUM(
+    'STARTED','FINISHED','NOT_STARTED'
+    );
+
+CREATE TYPE "position" AS ENUM(
+    'STRIKER',
+    'MIDFIELDER',
+    'DEFENSE',
+    'GOAL_KEEPER'
+    );
+
+CREATE TYPE playing_time_unit AS ENUM(
+    'SECOND',
+    'MINUTE',
+    'HOUR'
+    );
+
+CREATE TABLE seasons(
+    id UUID,
+    year int UNIQUE,
+    alias varchar(20),
+    status seasons_status,
+    PRIMARY KEY (year,alias)
+);
+
+CREATE TABLE coach(
+  id UUID PRIMARY KEY,
+  name varchar(150),
+  nationality varchar(150)
+);
+
+CREATE TABLE clubs(
+  id UUID PRIMARY KEY ,
+  name varchar(150) UNIQUE ,
+  acronym varchar(5),
+  stadium varchar(150),
+  year_creation int,
+  coach_id  UUID,
+  championship championship,
+  CONSTRAINT pk_coach_id FOREIGN KEY (coach_id) REFERENCES coach(id)
+);
+
+CREATE TABLE club_statistics(
+  club_id UUID,
+  season_year int,
+  ranking_points int,
+  scored_goals int,
+  difference_goals int,
+  clean_sheet_number int,
+  PRIMARY KEY (season_year,club_id),
+  CONSTRAINT pk_club_id FOREIGN KEY (club_id) REFERENCES clubs(id),
+  CONSTRAINT pk_season_year FOREIGN KEY (season_year) REFERENCES seasons(year)
+);
+
+CREATE TABLE players(
+   id UUID PRIMARY KEY ,
+   name varchar(150),
+   number int,
+   position "position",
+   nationality varchar(150),
+   age int,
+   club_id UUID,
+   CONSTRAINT pk_club_id FOREIGN KEY (club_id) REFERENCES clubs(id)
+);
+
+CREATE TABLE player_statistics(
+  player_id UUID,
+  scored_goals int,
+  playing_time float,
+  season_year int,
+  playing_time_unit playing_time_unit,
+  PRIMARY KEY(player_id,season_year),
+  CONSTRAINT pk_player_id FOREIGN KEY (player_id) REFERENCES players(id),
+  CONSTRAINT pk_player_season_year FOREIGN KEY (season_year) REFERENCES seasons(year)
+);
